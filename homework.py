@@ -14,7 +14,7 @@ TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.ERROR,
     format='%(asctime)s, %(levelname)s, %(name)s, %(message)s',
     filename='main.log', filemode='w'
 )
@@ -60,7 +60,7 @@ def main():
                 'current_date',
                 current_timestamp,
             )
-            time.sleep(300)
+            time.sleep(1200)
 
         except Exception as e:
             print(f'Бот столкнулся с ошибкой: {e}')
