@@ -37,7 +37,7 @@ def get_homework_statuses(current_timestamp):
     homework_statuses = requests.get(
         'https://praktikum.yandex.ru/api/user_api/homework_statuses/',
         headers={'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'},
-        params={'from_date': 0})  # current_timestamp
+        params={'from_date': current_timestamp})
     return homework_statuses.json()
 
 
@@ -60,7 +60,7 @@ def main():
                 'current_date',
                 current_timestamp,
             )
-            time.sleep(20)  # 1200
+            time.sleep(1200)
 
         except Exception as e:
             print(f'Бот столкнулся с ошибкой: {e}')
