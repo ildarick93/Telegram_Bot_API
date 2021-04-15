@@ -26,18 +26,22 @@ def parse_homework_status(homework):
     homework_status = homework.get('status')
     if homework_status == 'rejected':
         verdict = 'К сожалению в работе нашлись ошибки.'
-    else:
+    elif homework_status == 'approved':
         verdict = ('Ревьюеру всё понравилось, '
                    'можно приступать к следующему уроку.')
+    else:
+        verdict = 'Неверный ответ сервера.'
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
 
-    homework_statuses = requests.get(
-        'https://praktikum.yandex.ru/api/user_api/homework_statuses/',
-        headers={'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'},
-        params={'from_date': current_timestamp})
+    if current_timestamp is None:
+        current_timestamp = int(time.time())
+    url = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+    headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
+    params = {'from_date': current_timestamp}
+    homework_statuses = requests.get(url, headers=headers, params=params)
     return homework_statuses.json()
 
 
@@ -63,7 +67,7 @@ def main():
             time.sleep(1200)
 
         except Exception as e:
-            print(f'Бот столкнулся с ошибкой: {e}')
+            logging.error(f'Бот столкнулся с ошибкой: {e}')
             time.sleep(5)
 
 
