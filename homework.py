@@ -25,37 +25,22 @@ def parse_homework_status(homework):
 
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
+    rejected = 'rejected'
+    approved = 'approved'
+    reviewing = 'reviewing'
     if homework_status is None:
         verdict = 'Неверный ответ сервера.'
-    elif homework_status == 'rejected':
+    elif rejected == homework_status:
         verdict = 'К сожалению в работе нашлись ошибки.'
-    elif homework_status == 'approved':
+    elif approved == homework_status:
         verdict = ('Ревьюеру всё понравилось, '
                    'можно приступать к следующему уроку.')
+    elif reviewing == homework_status:
+        verdict = ('Работа есть в трекере, '
+                   'но ещё не на проверке.')
     else:
         verdict = 'Неизвестный статус.'
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
-
-# def parse_homework_status(homework):
-
-#     homework_name = homework.get('homework_name')
-#     homework_status = homework.get('status')
-#     var_dict = {'rejected': True,
-#                 'approved': True,
-#                 'reviewing': True
-#                 }
-#     approved = var_dict.get(homework_status)
-#     reviewing = var_dict.get(homework_status)
-#     if approved is None or reviewing is None or homework_name is None:
-#         return 'Неверный ответ сервера'
-#     if approved:
-#         verdict = ('Ревьюеру всё понравилось, '
-#                    'можно приступать к следующему уроку.')
-#     elif reviewing:
-#         verdict = 'Работа взята в ревью.'
-#     else:
-#         verdict = 'К сожалению в работе нашлись ошибки.'
-#     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
 def get_homework_statuses(current_timestamp):
@@ -65,7 +50,14 @@ def get_homework_statuses(current_timestamp):
     url = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     params = {'from_date': current_timestamp}
-    homework_statuses = requests.get(url, headers=headers, params=params)
+    try:
+        homework_statuses = requests.get(url, headers=headers, params=params)
+    except requests.RequestException:
+        logging.error(f'API недоступен. URL: {url}, params: {params}')
+        return {}
+    except ValueError:
+        logging.error(ValueError)
+        return {}
     return homework_statuses.json()
 
 
