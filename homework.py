@@ -25,14 +25,13 @@ def parse_homework_status(homework):
 
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
-    homework_status = None
     var_dict = {
         'rejected': 'К сожалению в работе нашлись ошибки.',
         'approved': 'Ревьюеру всё понравилось, можно приступать к следующему уроку.',
         'reviewing': 'Работа взята в ревью',
         None: 'Неверный ответ сервера.',
     }
-    if homework_status in var_dict:
+    if homework_status in var_dict and homework_name is not None:
         verdict = var_dict[homework_status]
     else:
         verdict = 'Неизвестный статус.'
