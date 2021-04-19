@@ -25,9 +25,10 @@ def parse_homework_status(homework):
 
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
+    approved = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
     var_dict = {
         'rejected': 'К сожалению в работе нашлись ошибки.',
-        'approved': 'Ревьюеру всё понравилось, можно приступать к следующему уроку.',
+        'approved': approved,
         'reviewing': 'Работа взята в ревью',
         None: 'Неверный ответ сервера.',
     }
@@ -47,13 +48,13 @@ def get_homework_statuses(current_timestamp):
     params = {'from_date': current_timestamp}
     try:
         homework_statuses = requests.get(url, headers=headers, params=params)
+        return homework_statuses.json()
     except requests.RequestException:
-        logging.error(f'API недоступен. URL: {url}, params: {params}')
+        logging.exception(f'API недоступен. URL: {url}, params: {params}')
         return {}
-    except ValueError:
-        logging.error(ValueError)
+    except ValueError as e:
+        logging.error(e)
         return {}
-    return homework_statuses.json()
 
 
 def send_message(message, bot_client):
